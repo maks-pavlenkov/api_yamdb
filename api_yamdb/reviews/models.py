@@ -3,9 +3,9 @@ from django.db import models
 
 
 class User(AbstractUser):
-    USER = 'Пользователь'
-    MODERATOR = 'Модератор'
-    ADMIN = 'Администратор'
+    USER = "Пользователь"
+    MODERATOR = "Модератор"
+    ADMIN = "Администратор"
     ROLES = [
         (USER, "Пользователь"),
         (MODERATOR, "Модератор"),
