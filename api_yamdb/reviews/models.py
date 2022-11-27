@@ -60,13 +60,24 @@ class Title(models.Model):
     description = models.TextField()
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        related_name="title",  blank=False, null=True
+        related_name="title", blank=False, null=True
     )
     year = models.IntegerField()
     genre = models.ForeignKey(
         Genre, on_delete=models.SET_NULL,
-        related_name="title",  blank=False, null=True
+        related_name="title", blank=False, null=True
     )
 
     def __str__(self):
         return self.name
+
+
+class Reviews(models.Model):
+    text = models.TextField()
+    author = models.CharField(max_length=20)
+    pub_date = models.DateTimeField(
+        'Дата публикации', auto_now_add=True
+    )
+    title = models.ForeignKey(
+        Title, on_delete=models.CASCADE, related_name='reviews'
+    )

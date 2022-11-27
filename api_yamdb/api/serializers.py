@@ -2,13 +2,13 @@ from datetime import date
 from rest_framework import serializers
 
 
-from reviews.models import Genre, Category, Title
+from reviews.models import Genre, Category, Title, Reviews
 
 
 class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.StringRelatedField(read_only=True, many=True)
     category = serializers.StringRelatedField(read_only=True)
-    description =  serializers.StringRelatedField(required = False)
+    description = serializers.StringRelatedField(required=False)
 
     class Meta:
         fields = '__all__'
@@ -35,3 +35,11 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Category
+
+
+class ReviewsSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Reviews
+        exclude = ('title',)
