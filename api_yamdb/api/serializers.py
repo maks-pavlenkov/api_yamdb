@@ -13,13 +13,13 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
-    # def validate(self):
-    #     title_year = int(self.context['year'])
-    #     current_year = date.today().year
-    #     if title_year > current_year:
-    #         raise serializers.ValidationError(
-    #             'Нельзя добавлять произведения, которые еще не вышли!'
-    #         )
+    def validate(self):
+        title_year = int(self.context['year'])
+        current_year = date.today().year
+        if title_year > current_year:
+            raise serializers.ValidationError(
+                'Нельзя добавлять произведения, которые еще не вышли!'
+            )
 
 
 class GenreSerializer(serializers.ModelSerializer):
