@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 from rest_framework import filters, viewsets
 from reviews.models import Category, Genre, Review, Title
 
@@ -20,7 +21,9 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score')
+    )
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -31,7 +34,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class ReviewsViewSet(viewsets.ModelViewSet):
+class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (filters.OrderingFilter,)
     ordering = ('title', 'pub_date', 'author')
@@ -46,7 +49,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         serializer.save(author='Test', title=self.get_title())
 
 
-class CommentsViewSet(viewsets.ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')

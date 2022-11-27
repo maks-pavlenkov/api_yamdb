@@ -1,5 +1,4 @@
 from datetime import date
-
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 
@@ -8,6 +7,7 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.StringRelatedField(read_only=True, many=True)
     category = serializers.StringRelatedField(read_only=True)
     description = serializers.StringRelatedField(required=False)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = '__all__'
