@@ -1,13 +1,10 @@
 from django.shortcuts import get_object_or_404
-from reviews.models import Genre, Category, Title
-from rest_framework import viewsets
-from rest_framework import filters
+from rest_framework import filters, viewsets
+from reviews.models import Category, Genre, Review, Title
 
 from .permissions import IsAdminOrReadOnly
-from .serializers import (
-    GenreSerializer, CategorySerializer, TitleSerializer, ReviewsSerializer
-)
-from reviews.models import Genre, Category, Title
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer, TitleSerializer)
 
 
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
@@ -35,9 +32,9 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewsSerializer
+    serializer_class = ReviewSerializer
     filter_backends = (filters.OrderingFilter,)
-    ordering = ('pub_date',)
+    ordering = ('title', 'pub_date', 'author')
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -47,3 +44,25 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author='Test', title=self.get_title())
+
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering = ('review', 'pub_date', 'author')
+
+    def get_review(self):
+        review = get_object_or_404(
+            Review, pk=self.kwargs.get('review_id'),
+            title=self.kwargs.get('title_id')
+        )
+        return review
+
+    def get_queryset(self):
+        return self.get_review().comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author='Test',
+            review=self.get_review()
+        )

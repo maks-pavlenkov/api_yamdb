@@ -73,7 +73,7 @@ class Title(models.Model):
         return self.name
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     text = models.TextField()
     author = models.CharField(max_length=20) # Will fix it later
     pub_date = models.DateTimeField(
@@ -84,4 +84,19 @@ class Reviews(models.Model):
     )
     score = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    text = models.CharField(max_length=500)
+    author = models.CharField(max_length=20)
+    pub_date = models.DateTimeField(
+        'Дата публикации', auto_now_add=True
     )
