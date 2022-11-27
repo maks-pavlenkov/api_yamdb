@@ -19,5 +19,5 @@ class AuthorAdminOrReadOnly(BasePermission):
         return (
             obj.author == request.user
             or request.user.is_moderator
-            or request.is_admin_or_superuser
+            or request.user.is_admin_or_superuser
         )
