@@ -2,7 +2,10 @@ import re
 
 from django.core.exceptions import ValidationError
 
+
 def validate_username(username):
+    """Проверяет корректность поля username."""
+
     PATTERN = re.compile(r'^[\w.@+-]+\Z')
 
     if username.lower() == "me":
@@ -13,3 +16,4 @@ def validate_username(username):
         raise ValidationError(
             "Username содержит некорректные символы."
         )
+    return username
