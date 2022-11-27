@@ -3,7 +3,7 @@ from django.db.models import Avg
 from rest_framework import filters, viewsets
 from reviews.models import Category, Genre, Review, Title
 
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, AuthorAdminOrReadOnly, ReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, TitleSerializer)
 
@@ -36,8 +36,14 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (AuthorAdminOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('title', 'pub_date', 'author')
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -51,8 +57,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (AuthorAdminOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
     def get_review(self):
         review = get_object_or_404(
