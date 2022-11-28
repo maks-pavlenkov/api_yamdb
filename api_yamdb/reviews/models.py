@@ -1,11 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 from .validators import validate_username
-
 
 USER = "user"
 MODERATOR = "moderator"
@@ -46,7 +44,6 @@ class User(AbstractUser):
         default=USER
     )
 
-
     @property
     def is_admin_or_superuser(self):
         return self.role == ADMIN or self.is_superuser
@@ -57,6 +54,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 class Category(models.Model):
     name = models.CharField(max_length=256)

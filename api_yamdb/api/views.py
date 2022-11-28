@@ -1,30 +1,23 @@
 from django.contrib.auth.tokens import default_token_generator
-from django.db import IntegrityError
 from django.core.mail import send_mail
-from rest_framework import viewsets, filters
-from rest_framework.filters import SearchFilter
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-                                IsAuthenticated, 
-                                AllowAny,
-                                AuthorAdminModeratorOrReadOnly,
-                                IsAdminOrReadOnly,
-                                ReadOnly,
-                                IsAdminOrSuperuser)
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.views import APIView
-from rest_framework.serializers import ValidationError
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
+from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
+                          IsAdminOrSuperuser, ReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer, TitleSerializer,
-                              UserSerializer,
-                        TokenSerializer,
-                      SignUpSerializer)
+                          GenreSerializer, ReviewSerializer, SignUpSerializer,
+                          TitleSerializer, TokenSerializer, UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):

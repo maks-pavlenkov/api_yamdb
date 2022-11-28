@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
+
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с объектами класса User."""
     class Meta:
@@ -85,4 +86,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         exclude = ('review',)
-
