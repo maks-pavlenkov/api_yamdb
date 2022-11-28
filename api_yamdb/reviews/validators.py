@@ -16,4 +16,3 @@ def validate_username(username):
         raise ValidationError(
             "Username содержит некорректные символы."
         )
-    return username
