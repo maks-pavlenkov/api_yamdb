@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets
 from reviews.models import Category, Genre, Review, Title
 
-from .permissions import IsAdminOrReadOnly, AuthorAdminOrReadOnly, ReadOnly
+from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
+                          ReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, TitleSerializer)
 
@@ -36,13 +37,13 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (AuthorAdminOrReadOnly,)
+    permission_classes = (AuthorAdminModeratorOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('title', 'pub_date', 'author')
 
     def get_permissions(self):
         if self.action == 'retrieve':
-            return (ReadOnly(),)
+            return ReadOnly()
         return super().get_permissions()
 
     def get_title(self):
@@ -52,18 +53,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return self.get_title().reviews.all()
 
     def perform_create(self, serializer):
-        serializer.save(author='Test', title=self.get_title())
+        serializer.save(author=self.request.user, title=self.get_title())
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (AuthorAdminOrReadOnly,)
+    permission_classes = (AuthorAdminModeratorOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')
 
     def get_permissions(self):
         if self.action == 'retrieve':
-            return (ReadOnly(),)
+            return ReadOnly()
         return super().get_permissions()
 
     def get_review(self):
@@ -78,6 +79,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(
-            author='Test',
+            author=self.request.user,
             review=self.get_review()
         )

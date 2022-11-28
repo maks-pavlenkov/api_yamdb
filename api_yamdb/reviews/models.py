@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -75,7 +76,9 @@ class Title(models.Model):
 
 class Review(models.Model):
     text = models.TextField()
-    author = models.CharField(max_length=20) # Will fix it later
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
@@ -83,7 +86,10 @@ class Review(models.Model):
         Title, on_delete=models.CASCADE, related_name='reviews'
     )
     score = models.PositiveIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)]
+        validators=[
+            MinValueValidator(settings.MIN_RATING_VALUE),
+            MaxValueValidator(settings.MAX_RATING_VALUE)
+        ]
     )
 
     def __str__(self):
@@ -96,7 +102,9 @@ class Comment(models.Model):
         related_name='comments'
     )
     text = models.CharField(max_length=500)
-    author = models.CharField(max_length=20)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
