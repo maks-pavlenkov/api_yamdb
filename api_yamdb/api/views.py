@@ -1,26 +1,30 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.db import IntegrityError
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import (
+                                IsAuthenticated, 
+                                AllowAny,
+                                AuthorAdminModeratorOrReadOnly,
+                                IsAdminOrReadOnly,
+                                ReadOnly,
+                                IsAdminOrSuperuser)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.views import APIView
 from rest_framework.serializers import ValidationError
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+from reviews.models import Category, Genre, Review, Title, User
 
-from .serializers import (
-    UserSerializer,
-    TokenSerializer,
-    SignUpSerializer
-)
-
-from .permissions import IsAdminOrSuperuser
-
-from reviews.models import User
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer, TitleSerializer,
+                              UserSerializer,
+                        TokenSerializer,
+                      SignUpSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -127,3 +131,78 @@ class TokenView(APIView):
         return Response(
             {'confirmation_code': ['Invalid confirmation code!']},
             status=status.HTTP_400_BAD_REQUEST)
+
+
+class GenreViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score')
+    )
+    serializer_class = TitleSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_queryset(self):
+        return get_object_or_404(Title, pk=self.kwargs.get('titles_id'))
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = (AuthorAdminModeratorOrReadOnly,)
+    filter_backends = (filters.OrderingFilter,)
+    ordering = ('title', 'pub_date', 'author')
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return ReadOnly()
+        return super().get_permissions()
+
+    def get_title(self):
+        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+
+    def get_queryset(self):
+        return self.get_title().reviews.all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, title=self.get_title())
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (AuthorAdminModeratorOrReadOnly,)
+    filter_backends = (filters.OrderingFilter,)
+    ordering = ('review', 'pub_date', 'author')
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return ReadOnly()
+        return super().get_permissions()
+
+    def get_review(self):
+        review = get_object_or_404(
+            Review, pk=self.kwargs.get('review_id'),
+            title=self.kwargs.get('title_id')
+        )
+        return review
+
+    def get_queryset(self):
+        return self.get_review().comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user,
+            review=self.get_review()
+        )

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from datetime import timedelta
 
@@ -17,6 +18,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'reviews.apps.ReviewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -112,6 +114,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 AUTH_USER_MODEL = 'reviews.User'
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
@@ -136,3 +139,5 @@ SIMPLE_JWT = {
 
 MAX_NAME_LENGTH = 150
 MAX_EMAIL_LENGTH = 254
+MIN_RATING_VALUE = 1
+MAX_RATING_VALUE = 10
