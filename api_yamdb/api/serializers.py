@@ -30,6 +30,13 @@ class SignUpSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=settings.MAX_EMAIL_LENGTH)
 
 
+class TokenSerializer(serializers.Serializer):
+    """Сериализатор для обмена кода подтверждения на токен."""
+
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
+
+
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
