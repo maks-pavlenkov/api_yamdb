@@ -29,6 +29,11 @@ class SignUpSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=settings.MAX_NAME_LENGTH)
     email = serializers.EmailField(max_length=settings.MAX_EMAIL_LENGTH)
 
+    def validate_username(self, value):
+        """Проверяет, что username состоит из разрешенных символов."""
+        validators.validate_username(value)
+        return value
+
 
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для обмена кода подтверждения на токен."""
