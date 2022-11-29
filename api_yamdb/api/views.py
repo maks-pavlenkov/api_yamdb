@@ -3,7 +3,9 @@ from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -17,7 +19,8 @@ from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
                           IsAdminOrSuperuser, ReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
-                          TitleSerializer, TokenSerializer, UserSerializer)
+                        TokenSerializer, UserSerializer,
+                          TitleGetSerializer, TitlePostSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -129,24 +132,35 @@ class TokenView(APIView):
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         rating=Avg('reviews__score')
     )
-    serializer_class = TitleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
 
-    def get_queryset(self):
-        return get_object_or_404(Title, pk=self.kwargs.get('titles_id'))
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return TitlePostSerializer
+
+        return TitleGetSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
