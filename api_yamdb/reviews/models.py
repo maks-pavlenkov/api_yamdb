@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -40,33 +41,41 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
+    slug = models.SlugField()
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
+    slug = models.SlugField()
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
     description = models.TextField()
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        related_name="title",  blank=False, null=True
+        related_name="title", null=True
     )
     year = models.IntegerField()
-    genre = models.ForeignKey(
-        Genre, on_delete=models.SET_NULL,
-        related_name="title",  blank=False, null=True
+    genre = models.ManyToManyField(
+        Genre, related_name="title",
+        through='GenreTitle',
     )
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
