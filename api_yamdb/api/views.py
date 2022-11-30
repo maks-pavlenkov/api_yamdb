@@ -21,7 +21,6 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleGetSerializer, TitlePostSerializer,
                           TokenSerializer, UserSerializer)
-from .filters import TitleFilter
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -175,7 +174,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-    filter_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
