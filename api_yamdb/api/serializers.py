@@ -57,33 +57,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TitleGetSerializer(serializers.ModelSerializer):
-    description = serializers.CharField(required=False)
+    rating = serializers.IntegerField(read_only=True)
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category', 'rating')
+        read_only_fields = ('__all__')
 
-    def create(self, validated_data):
-        genres = validated_data.pop('genre')
-        category = validated_data.pop('category')
-        title = Title.objects.create(**validated_data)
-        print(genres)
-        for genre in genres:
-            genre_obj = get_object_or_404(Genre, slug=genre['slug'])
-            GenreTitle.objects.create(genre=genre_obj, title=title)
-        category_obj = get_object_or_404(Category, slug=category['slug'])
-        title = Title.objects.create(
-            genre=GenreTitle.genre,
-            category=category_obj,
-            **validated_data
-        )
-        return title
+
 
 
 class TitlePostSerializer(serializers.ModelSerializer):
-    description = serializers.CharField(required=False)
+    #description = serializers.CharField(required=False)
     category = serializers.SlugRelatedField(slug_field='slug',
                                             queryset=Category.objects.all())
     genre = serializers.SlugRelatedField(slug_field='slug', many=True,
@@ -91,7 +78,8 @@ class TitlePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        # fields = '__all__'
 
     def validate(self, data):
         title_year = data['year']
@@ -102,6 +90,21 @@ class TitlePostSerializer(serializers.ModelSerializer):
             )
         return data
 
+    # def create(self, validated_data):
+    #     genres = validated_data.pop('genre')
+    #     category = validated_data.pop('category')
+    #     title = Title.objects.create(**validated_data)
+    #     print(genres)
+    #     for genre in genres:
+    #         genre_obj = get_object_or_404(Genre, slug=genre['slug'])
+    #         GenreTitle.objects.create(genre=genre_obj, title=title)
+    #     category_obj = get_object_or_404(Category, slug=category['slug'])
+    #     title = Title.objects.create(
+    #         genre=GenreTitle.genre,
+    #         category=category_obj,
+    #         **validated_data
+    #     )
+    #     return title
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(read_only=True)

@@ -58,7 +58,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True) # без этого падает один тест
 
     def __str__(self):
         return self.name
@@ -84,6 +84,9 @@ class Title(models.Model):
         Genre, related_name="title",
         through='GenreTitle',
     )
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
