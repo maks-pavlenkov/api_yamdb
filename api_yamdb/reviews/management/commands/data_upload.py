@@ -5,6 +5,7 @@ from django.core.management import BaseCommand
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
@@ -12,6 +13,7 @@ class Command(BaseCommand):
             os.path.abspath(os.path.dirname('manage.py')),
             'static/data/users.csv'
         )
+
         with open(user_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -28,6 +30,7 @@ class Command(BaseCommand):
             os.path.abspath(os.path.dirname('manage.py')),
             'static/data/genre.csv'
         )
+
         with open(genres_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
