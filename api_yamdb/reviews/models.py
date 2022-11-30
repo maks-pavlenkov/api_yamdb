@@ -57,7 +57,7 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
+    name = models.CharField(max_length=settings.MAX_NAME_FIELD_NAME)
     slug = models.SlugField(unique=True) # без этого падает один тест
 
     def __str__(self):
@@ -65,15 +65,15 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
-    slug = models.SlugField()
+    name = models.CharField(max_length=settings.MAX_NAME_FIELD_NAME)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=settings.MAX_NAME_LENGTH)
+    name = models.CharField(max_length=settings.MAX_NAME_FIELD_NAME)
     description = models.TextField()
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
