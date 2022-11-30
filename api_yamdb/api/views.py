@@ -137,6 +137,15 @@ class GenreViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
 
+    @action(detail=False,
+            methods=['delete'],
+            url_path=r'(?P<slug>[-\w]+)',
+            permission_classes=(IsAdminOrReadOnly,))
+    def slug(self, request, slug):
+        genre = get_object_or_404(Genre, slug=slug)
+        genre.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -145,6 +154,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
+
+    @action(detail=False,
+            methods=['delete'],
+            url_path=r'(?P<slug>[-\w]+)',
+            permission_classes=(IsAdminOrReadOnly,),
+            )
+    def slug(self, request, slug):
+        category = get_object_or_404(Category, slug=slug)
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TitleViewSet(viewsets.ModelViewSet):

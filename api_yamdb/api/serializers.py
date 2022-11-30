@@ -4,7 +4,6 @@ from datetime import date
 
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Category, Genre, GenreTitle, Title
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
@@ -64,8 +63,8 @@ class TitleGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category', 'rating')
-        read_only_fields = ('__all__')
 
+        #read_only_fields = ('__all__')
 
 
 
@@ -82,12 +81,13 @@ class TitlePostSerializer(serializers.ModelSerializer):
         # fields = '__all__'
 
     def validate(self, data):
-        title_year = data['year']
-        current_year = date.today().year
-        if title_year > current_year:
-            raise serializers.ValidationError(
-                'Нельзя добавлять произведения, которые еще не вышли!'
-            )
+        if 'year' in data:
+            title_year = data['year']
+            current_year = date.today().year
+            if title_year > current_year:
+                raise serializers.ValidationError(
+                    'Нельзя добавлять произведения, которые еще не вышли!'
+                )
         return data
 
     # def create(self, validated_data):

@@ -2,12 +2,13 @@ import csv
 import os
 
 from django.core.management import BaseCommand
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Genre, Title, Review, Comment, User
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+
         genres_path = os.path.join(
                                 os.path.abspath(os.path.dirname('manage.py')),
                                 'static/data/genre.csv'
