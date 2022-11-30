@@ -8,9 +8,14 @@ class IsAdminOrSuperuser(BasePermission):
 
 
 class IsAdminOrReadOnly(BasePermission):
+    def has_permission(self, request, view): # без has_permission падает 7 тестов
+        return (request.method in SAFE_METHODS
+        or (request.user.is_authenticated
+            and request.user.is_admin_or_superuser))
+
     def has_object_permission(self, request, view, obj):
         return (request.method in SAFE_METHODS
-                or request.user.is_staff)
+                or (request.user.is_authenticated and request.user.is_admin_or_superuser)) # надо подумать, точно sfaff сюда или admin_or_superuser
 
 
 class ReadOnly(BasePermission):
@@ -20,6 +25,11 @@ class ReadOnly(BasePermission):
 
 
 class AuthorAdminModeratorOrReadOnly(BasePermission):
+
+# Без этого has_permission падают 2 теста на анонов
+    def has_permission(self, request, view):
+        return (request.method in SAFE_METHODS
+                or request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
         return (
