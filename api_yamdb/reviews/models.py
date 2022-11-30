@@ -59,7 +59,7 @@ class User(AbstractUser):
 class Category(models.Model):
     name = models.CharField(max_length=settings.MAX_NAME_FIELD_NAME)
 
-    slug = models.SlugField(unique=True) # без этого падает один тест
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
@@ -94,6 +94,10 @@ class Title(models.Model):
 
 
 class Review(models.Model):
+
+    class Meta:
+        unique_together = ('author', 'title')
+
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE
