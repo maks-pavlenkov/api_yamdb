@@ -186,6 +186,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorAdminModeratorOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('title', 'pub_date', 'author')
+    http_method_names = ['get', 'post', 'head', 'patch', 'delete']
 
     def get_permissions(self):
         if self.action == 'retrieve':
