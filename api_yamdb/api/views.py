@@ -178,11 +178,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
             return TitlePostSerializer
-
         return TitleGetSerializer
-
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -193,13 +189,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'retrieve':
-            return ReadOnly()
+            return (ReadOnly(),)
         return super().get_permissions()
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
+        print('yugiuoyughbukgvhf')
         return self.get_title().reviews.all()
 
     def perform_create(self, serializer):
@@ -214,7 +211,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'retrieve':
-            return ReadOnly()
+            return (ReadOnly(),)
         return super().get_permissions()
 
     def get_review(self):
