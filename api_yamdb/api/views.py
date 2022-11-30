@@ -23,6 +23,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TokenSerializer, UserSerializer)
 from .filters import TitleFilter
 
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     Вьюсет для модели User.
