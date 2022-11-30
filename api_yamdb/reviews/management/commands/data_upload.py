@@ -2,16 +2,16 @@ import csv
 import os
 
 from django.core.management import BaseCommand
-from reviews.models import Category, Genre, Title, Review, Comment, User
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
         user_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/users.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/users.csv'
+        )
         with open(user_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -25,9 +25,9 @@ class Command(BaseCommand):
                     last_name=row[6]
                 )
         genres_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/genre.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/genre.csv'
+        )
         with open(genres_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -37,9 +37,9 @@ class Command(BaseCommand):
                     slug=row[2],
                 )
         categories_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/category.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/category.csv'
+        )
         with open(categories_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -49,9 +49,9 @@ class Command(BaseCommand):
                     slug=row[2],
                 )
         titles_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/titles.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/titles.csv'
+        )
         with open(titles_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -62,9 +62,9 @@ class Command(BaseCommand):
                     category_id=row[3]
                 )
         genre_title_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/genre_title.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/genre_title.csv'
+        )
         with open(genre_title_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -72,9 +72,9 @@ class Command(BaseCommand):
                 genre = Genre.objects.get(id=row[2])
                 title.genre.add(genre)
         review_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/review.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/review.csv'
+        )
         with open(review_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
@@ -89,9 +89,9 @@ class Command(BaseCommand):
                     pub_date=row[5]
                 )
         comments_path = os.path.join(
-                                os.path.abspath(os.path.dirname('manage.py')),
-                                'static/data/comments.csv'
-                                )
+            os.path.abspath(os.path.dirname('manage.py')),
+            'static/data/comments.csv'
+        )
         with open(comments_path, "r") as csv_file:
             data = list(csv.reader(csv_file, delimiter=","))
             for row in data[1:]:
