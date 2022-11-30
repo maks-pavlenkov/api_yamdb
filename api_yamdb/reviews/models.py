@@ -58,6 +58,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=settings.MAX_NAME_FIELD_NAME)
+
     slug = models.SlugField(unique=True) # без этого падает один тест
 
     def __str__(self):
