@@ -24,7 +24,6 @@ class CreateListDeleteViewSet(
 
 
 class GenreViewSet(CreateListDeleteViewSet):
-
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
