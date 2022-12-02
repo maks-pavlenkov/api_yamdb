@@ -16,7 +16,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
 from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
-                          IsAdminOrSuperuser, ReadOnly)
+                          IsAdminOrSuperuser)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleGetSerializer, TitlePostSerializer,
@@ -190,16 +190,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering = ('title', 'pub_date', 'author')
     http_method_names = ['get', 'post', 'head', 'patch', 'delete']
 
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
-        print('yugiuoyughbukgvhf')
         return self.get_title().reviews.all()
 
     def perform_create(self, serializer):
@@ -212,12 +206,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')
 
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
-    def get_review(self):
+    def get_title(self):
         review = get_object_or_404(
             Review, pk=self.kwargs.get('review_id'),
             title=self.kwargs.get('title_id')
@@ -225,10 +214,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review
 
     def get_queryset(self):
-        return self.get_review().comments.all()
+        return self.get_title().comments.all()
 
     def perform_create(self, serializer):
         serializer.save(
             author=self.request.user,
-            review=self.get_review()
+            review=self.get_title()
         )
