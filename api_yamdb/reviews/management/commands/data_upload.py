@@ -6,6 +6,7 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 from .validators import data_validation
 
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
