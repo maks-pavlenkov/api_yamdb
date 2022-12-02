@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
@@ -15,13 +15,23 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
+from .filters import TitleFilter
 from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
                           IsAdminOrSuperuser)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleGetSerializer, TitlePostSerializer,
                           TokenSerializer, UserSerializer)
-from .filters import TitleFilter
+
+
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+
+    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -130,41 +140,24 @@ class TokenView(APIView):
             status=status.HTTP_400_BAD_REQUEST)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CreateListDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
-    @action(detail=False,
-            methods=['delete'],
-            url_path=r'(?P<slug>[-\w]+)',
-            permission_classes=(IsAdminOrReadOnly,))
-    def slug(self, request, slug):
-        genre = get_object_or_404(Genre, slug=slug)
-        genre.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateListDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
-    @action(detail=False,
-            methods=['delete'],
-            url_path=r'(?P<slug>[-\w]+)',
-            permission_classes=(IsAdminOrReadOnly,),
-            )
-    def slug(self, request, slug):
-        category = get_object_or_404(Category, slug=slug)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
