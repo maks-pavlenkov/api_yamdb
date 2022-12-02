@@ -1,4 +1,8 @@
+from django.db import IntegrityError
+
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
 from . import validators
 from .models import User, MAX_NAME_LENGTH, MAX_EMAIL_LENGTH
 
@@ -18,8 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.Serializer):
-    """Сериализатор для регистрации нового пользователя."""
-
     username = serializers.CharField(max_length=MAX_NAME_LENGTH)
     email = serializers.EmailField(max_length=MAX_EMAIL_LENGTH)
 
@@ -28,9 +30,24 @@ class SignUpSerializer(serializers.Serializer):
         validators.validate_username(value)
         return value
 
+    def validate(self, data):
+        """
+        Проверяет, можно ли создавать пользователя с таким username и email.
+        """
+        try:
+            user, is_new = User.objects.get_or_create(
+                email=data['email'],
+                username=data['username'])
+        except IntegrityError:
+            raise ValidationError(
+                detail=('Невозможно создать пользователя с такими данными: '
+                        'username или email уже занят.'
+                        )
+            )
+        return data
+
 
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для обмена кода подтверждения на токен."""
-
     username = serializers.CharField()
     confirmation_code = serializers.CharField()

@@ -22,8 +22,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=MAX_NAME_LENGTH,
         unique=True,
-        validators=[validate_username]
-    )
+        validators=[validate_username])
     email = models.EmailField(
         max_length=MAX_EMAIL_LENGTH,
         unique=True)
