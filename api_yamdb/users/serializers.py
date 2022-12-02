@@ -1,7 +1,6 @@
-from django.conf import settings
 from rest_framework import serializers
 from . import validators
-from .models import User
+from .models import User, MAX_NAME_LENGTH, MAX_EMAIL_LENGTH
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,8 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
 class SignUpSerializer(serializers.Serializer):
     """Сериализатор для регистрации нового пользователя."""
 
-    username = serializers.CharField(max_length=settings.MAX_NAME_LENGTH)
-    email = serializers.EmailField(max_length=settings.MAX_EMAIL_LENGTH)
+    username = serializers.CharField(max_length=MAX_NAME_LENGTH)
+    email = serializers.EmailField(max_length=MAX_EMAIL_LENGTH)
 
     def validate_username(self, value):
         """Проверяет, что username состоит из разрешенных символов."""

@@ -2,7 +2,6 @@ import os
 from datetime import timedelta
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -139,8 +138,6 @@ SIMPLE_JWT = {
 
 # Project constants
 
-MAX_NAME_LENGTH = 150
 MAX_NAME_FIELD_NAME = 256
-MAX_EMAIL_LENGTH = 254
 MIN_RATING_VALUE = 1
 MAX_RATING_VALUE = 10

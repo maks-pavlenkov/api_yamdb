@@ -32,7 +32,6 @@ class UserViewSet(viewsets.ModelViewSet):
     (кроме доступа к users/me, который доступен любому аутентифицированному
     пользователю).
     """
-
     permission_classes = (IsAdminOrSuperuser,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -56,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 data=request.data,
                 partial=True)
             serializer.is_valid(raise_exception=True)
-            serializer.save(role=request.user.role)  # пока костыль
+            serializer.save(role=request.user.role)
         return Response(serializer.data)
 
 
@@ -65,7 +64,6 @@ class SignUpView(APIView):
     Вью-класс для регистрации и получения confirmation code.
     Разрешается только POST-запрос. Доступ без токена.
     """
-
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -106,7 +104,6 @@ class TokenView(APIView):
     Вью-класс для обмена confirmation code на JWT Access Token.
     Разрешается только POST-запрос. Доступ без токена.
     """
-
     permission_classes = (AllowAny,)
 
     def post(self, request):
