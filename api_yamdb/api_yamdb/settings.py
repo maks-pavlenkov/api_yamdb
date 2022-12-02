@@ -2,13 +2,10 @@ import os
 from datetime import timedelta
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -17,6 +14,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -110,7 +108,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
-AUTH_USER_MODEL = 'reviews.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -138,8 +136,6 @@ SIMPLE_JWT = {
 
 # Project constants
 
-MAX_NAME_LENGTH = 150
 MAX_NAME_FIELD_NAME = 256
-MAX_EMAIL_LENGTH = 254
 MIN_RATING_VALUE = 1
 MAX_RATING_VALUE = 10
