@@ -55,14 +55,42 @@ pip install -r requirements.txt
 Получить все имеющиеся произведения (GET-запрос) или создать новое (POST-запрос):
  ```
 api/v1/titles/
- ```
+
+{
+  "name": "Анна Каренина",
+  "year": 1877,
+  "description": "Роман Льва Николеваича Толстого",
+  "genre": [
+    "Роман"
+  ],
+  "category": "Книга"
+}
+```
+Получить все имеющиеся категории (GET-запрос) или добавить новую (POST-запрос):
+```
+api/v1/categories/
+
+{
+  "name": "Картина",
+  "slug": "painting"
+}
+```
  Добавить новую рецензию на произведение (POST-запрос):
- ```
+```
 api/v1/titles/{title_id}/reviews/
- ```
+
+{
+    "text": "it was a good movie",
+    "score": 5
+}
+```
 Получить все отзывы на рецензию определенного произведения (GET-запрос):
 ```
 api/v1/titles/{title_id}/reviews/{review_id}/comments/
+
+{
+    "text": "hello"
+}
 ```
 ### Авторы
 - **Максим Павленков** (тимлид, разработка ресурсов Reviews и Comments)
