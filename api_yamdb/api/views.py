@@ -206,7 +206,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')
 
-    def get_title(self):
+    def get_review(self):
         review = get_object_or_404(
             Review, pk=self.kwargs.get('review_id'),
             title=self.kwargs.get('title_id')
@@ -214,10 +214,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         return review
 
     def get_queryset(self):
-        return self.get_title().comments.all()
+        return self.get_review().comments.all()
 
     def perform_create(self, serializer):
         serializer.save(
             author=self.request.user,
-            review=self.get_title()
+            review=self.get_review()
         )
