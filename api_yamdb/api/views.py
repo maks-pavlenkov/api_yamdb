@@ -8,14 +8,21 @@ from rest_framework.response import Response
 from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilter
-from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
-
-                          ReadOnly)
+from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleGetSerializer, TitlePostSerializer)
 from .filters import TitleFilter
 
+
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+
+    pass
 
 class GenreViewSet(viewsets.ModelViewSet):
 
