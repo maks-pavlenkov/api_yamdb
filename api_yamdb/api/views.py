@@ -1,13 +1,15 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from reviews.models import Category, Genre, Review, Title
 
+from .filters import TitleFilter
 from .permissions import (AuthorAdminModeratorOrReadOnly, IsAdminOrReadOnly,
+
                           ReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
@@ -16,40 +18,24 @@ from .filters import TitleFilter
 
 
 class GenreViewSet(viewsets.ModelViewSet):
+
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
-    @action(detail=False,
-            methods=['delete'],
-            url_path=r'(?P<slug>[-\w]+)',
-            permission_classes=(IsAdminOrReadOnly,))
-    def slug(self, request, slug):
-        genre = get_object_or_404(Genre, slug=slug)
-        genre.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateListDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
-
-    @action(detail=False,
-            methods=['delete'],
-            url_path=r'(?P<slug>[-\w]+)',
-            permission_classes=(IsAdminOrReadOnly,),
-            )
-    def slug(self, request, slug):
-        category = get_object_or_404(Category, slug=slug)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -75,11 +61,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering = ('title', 'pub_date', 'author')
     http_method_names = ['get', 'post', 'head', 'patch', 'delete']
 
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 
@@ -95,11 +76,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorAdminModeratorOrReadOnly,)
     filter_backends = (filters.OrderingFilter,)
     ordering = ('review', 'pub_date', 'author')
-
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
 
     def get_review(self):
         review = get_object_or_404(
