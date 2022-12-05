@@ -3,15 +3,14 @@ from django.db import models
 
 from .validators import validate_username
 
-MAX_NAME_LENGTH = 150
-MAX_EMAIL_LENGTH = 254
-
 
 class User(AbstractUser):
     """Кастомизированная модель пользователя."""
     USER = "user"
     MODERATOR = "moderator"
     ADMIN = "admin"
+    MAX_NAME_LENGTH = 150
+    MAX_EMAIL_LENGTH = 254
 
     ROLES = [
         (USER, "Пользователь"),
