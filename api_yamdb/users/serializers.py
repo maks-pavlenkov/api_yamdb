@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from . import validators
-from .models import User, MAX_NAME_LENGTH, MAX_EMAIL_LENGTH
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,8 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=MAX_NAME_LENGTH)
-    email = serializers.EmailField(max_length=MAX_EMAIL_LENGTH)
+    username = serializers.CharField(max_length=User.MAX_NAME_LENGTH)
+    email = serializers.EmailField(max_length=User.MAX_EMAIL_LENGTH)
 
     def validate_username(self, value):
         """Проверяет, что username состоит из разрешенных символов."""
