@@ -1,10 +1,10 @@
 import os
 
 from django.core.management import BaseCommand
-from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.models import User
 
 from .validators import data_validation
-
 
 
 class Command(BaseCommand):
