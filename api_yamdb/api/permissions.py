@@ -19,15 +19,6 @@ class IsAdminOrReadOnly(BasePermission):
             )
         )
 
-    def has_object_permission(self, request, view, obj):
-        return (
-            request.method in SAFE_METHODS
-            or (
-                request.user.is_authenticated
-                and request.user.is_admin_or_superuser
-            )
-        )
-
 
 class AuthorAdminModeratorOrReadOnly(BasePermission):
 
@@ -41,7 +32,8 @@ class AuthorAdminModeratorOrReadOnly(BasePermission):
         if view.action == 'retrieve':
             return True
         return (
-            obj.author == request.user
+            view.action == 'retrieve'
+            or obj.author == request.user
             or request.user.is_moderator
             or request.user.is_admin_or_superuser
         )
