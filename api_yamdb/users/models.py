@@ -11,7 +11,6 @@ class User(AbstractUser):
     ADMIN = "admin"
     MAX_NAME_LENGTH = 150
     MAX_EMAIL_LENGTH = 254
-
     ROLES = [
         (USER, "Пользователь"),
         (MODERATOR, "Модератор"),

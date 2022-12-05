@@ -29,6 +29,8 @@ class AuthorAdminModeratorOrReadOnly(BasePermission):
         )
 
     def has_object_permission(self, request, view, obj):
+        if view.action == 'retrieve':
+            return True
         return (
             view.action == 'retrieve'
             or obj.author == request.user
