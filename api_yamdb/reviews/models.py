@@ -48,10 +48,6 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-
-    class Meta:
-        unique_together = ('author', 'title')
-
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE
@@ -69,6 +65,10 @@ class Review(models.Model):
         ]
     )
 
+    class Meta:
+        unique_together = ('author', 'title')
+        ordering = ('pub_date',)
+
     def __str__(self):
         return self.text
 
@@ -85,6 +85,12 @@ class Comment(models.Model):
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
+
+    class Meta:
+        ordering = ('pub_date',)
+
+    def __str__(self):
+        return self.text
 
 
 class GenreTitle(models.Model):
