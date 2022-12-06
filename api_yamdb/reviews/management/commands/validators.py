@@ -6,8 +6,8 @@ from errno import EACCES, ENOENT
 def data_validation(path, required_fields):
 
     try:
-        with open(path, "r") as csv_file:
-            data = list(reader(csv_file, delimiter=","))
+        with open(path, 'r') as csv_file:
+            data = list(reader(csv_file, delimiter=','))
             if not data:
                 raise ValueError('No data available')
     except IOError as e:
