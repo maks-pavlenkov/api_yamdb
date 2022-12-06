@@ -6,15 +6,15 @@ from .validators import validate_username
 
 class User(AbstractUser):
     """Кастомизированная модель пользователя."""
-    USER = "user"
-    MODERATOR = "moderator"
-    ADMIN = "admin"
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
     MAX_NAME_LENGTH = 150
     MAX_EMAIL_LENGTH = 254
     ROLES = [
-        (USER, "Пользователь"),
-        (MODERATOR, "Модератор"),
-        (ADMIN, "Администратор")
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор')
     ]
 
     username = models.CharField(

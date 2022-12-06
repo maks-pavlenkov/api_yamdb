@@ -7,8 +7,10 @@ from users.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=256)
-
     slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -17,6 +19,9 @@ class Category(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -27,11 +32,11 @@ class Title(models.Model):
     description = models.TextField()
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        related_name="title", null=True
+        related_name='title', null=True
     )
-    year = models.IntegerField()
+    year = models.PositiveIntegerField(db_index=True)
     genre = models.ManyToManyField(
-        Genre, related_name="title",
+        Genre, related_name='title',
         through='GenreTitle',
     )
 
@@ -43,10 +48,6 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-
-    class Meta:
-        unique_together = ('author', 'title')
-
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE
@@ -63,6 +64,10 @@ class Review(models.Model):
             MaxValueValidator(settings.MAX_RATING_VALUE)
         ]
     )
+
+    class Meta:
+        unique_together = ('author', 'title')
+        ordering = ('pub_date',)
 
     def __str__(self):
         return self.text
@@ -81,6 +86,12 @@ class Comment(models.Model):
         'Дата публикации', auto_now_add=True
     )
 
+    class Meta:
+        ordering = ('pub_date',)
+
+    def __str__(self):
+        return self.text
+
 
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
@@ -89,6 +100,9 @@ class GenreTitle(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE
     )
+
+    class Meta:
+        ordering = ('genre', 'title',)
 
     def __str__(self):
         return f'{self.genre} {self.title}'
